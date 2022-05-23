@@ -1,6 +1,6 @@
 # Cloud-Native Azure Virtual Desktop 
 
-This workflow provisions an Azure Virtual Desktop into an Azure subscription using GitHub Actions and Terraform. The virtual desktop is integrated into Intune, fully managed, and supports Azure AD-only accounts for authentication. No hybrid identity or hybrid management is required to support the desktop, nor is Azure Active Directory Domain Services, and the provisioning is password-less via OIDC.
+This workflow provisions an Azure Virtual Desktop into an Azure subscription using GitHub Actions and Terraform. The virtual desktop is [fully managed by Intune](https://docs.microsoft.com/en-us/mem/intune/fundamentals/azure-virtual-desktop-multi-session) in its cloud-native architecture, and supports Azure AD-only accounts for authentication. No hybrid identity or hybrid/co-management is required to support the desktop, nor is Azure Active Directory Domain Services. The best part - the provisioning is fully password-less via OIDC.
 
 Due to cloud-native approach, the current limitations in Azure Files – specifically the fact that the new Kerberos ticketing support in Azure AD support [still requires a hybrid identity as a pre-requisite](https://docs.microsoft.com/en-us/azure/virtual-desktop/create-profile-container-azure-ad#prerequisites) – means that good old fashioned local profiles are used instead of FSLogix. It would likely be trivial to adopt an FSLogix architecture if a hybrid identity was available to you.
 
@@ -8,7 +8,7 @@ Due to cloud-native approach, the current limitations in Azure Files – specifi
 
 We don't want to store secrets. 
 
-Instead, we're going to leverage the [OIDC-based authentication process](https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/configuring-openid-connect-in-azure) for GitHub Actions and Azure. This process, once established, means we don't need to store any secrets inside of GitHub for the actions workflow to provision things inside of our Azure subscription. Terraform (as of v1.2) and the AzureRM provider (as of v3.7) fully supports this approach, which means our declarative provisioning process is fully password-less! 
+Instead, we're going to leverage the [OIDC-based authentication process](https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/configuring-openid-connect-in-azure) for GitHub Actions and Azure. This process, means we don't need to store any secrets inside of GitHub, Key Vault, or similar, for the actions workflow to provision things inside of our Azure subscription. Terraform (as of v1.2) and the AzureRM provider (as of v3.7) fully supports this approach, which means our declarative provisioning process is fully password-less! You can also run native Azure CLI and Az PowerShell commands with this approach.
 
 ## Boostrappping
 
@@ -149,3 +149,5 @@ steps:
         az group list
     azcliversion: "latest"
 ```
+
+If you are looking to adopt a configuration language like ARM or Bicep, you should be able to trivially transpose the HCL. Don't forget the 
