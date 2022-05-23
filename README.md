@@ -150,4 +150,4 @@ steps:
     azcliversion: "latest"
 ```
 
-If you are looking to adopt a configuration language like ARM or Bicep, you should be able to trivially transpose the HCL. Don't forget the 
+If you are looking to adopt a configuration language like ARM or Bicep, you should be able to trivially transpose the HCL into your language of choice. You can adopt all the same paradigms - such as the obtuse [MDM configuration](terraform/avd/main.tf#L295), [extensions](terraform/avd/main.tf#L404) and [bootstrapping](terraform/avd/main.tf#L276) - to quickly get you up and running.
