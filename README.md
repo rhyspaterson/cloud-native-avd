@@ -116,3 +116,36 @@ az feature list -o table --query "[?contains(name, 'Microsoft.Compute/Encryption
 # Once complete, refresh the provider
 az provider register --namespace Microsoft.Compute
 ```
+
+### Other languages and the password-less approach
+
+This approach can equally be used in a non-Terraform model, and instead using an alternate domain-specific language. For example, you can authenticate to the Azure public cloud via the same OIDC approach, and then leverage both the Azure CLI and Azure PowerShell. You could then utilise this session to run commands, or apply an ARM or Bicep template, for example.
+
+```yaml
+steps:
+- name: OIDC Login to Azure Public Cloud with Azure CLI + AzPowerShell
+    uses: azure/login@v1
+    with:
+    client-id: ${{ secrets.AZURE_CLIENT_ID }} 
+    tenant-id: ${{ secrets.AZURE_TENANT_ID }} 
+    subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }} 
+    enable-AzPSSession: true
+
+# Confirm we can run authenticated commands via Azure PowerShell
+- name: 'Test Azure PowerShell'
+    uses: azure/powershell@v1
+    with:
+        inlineScript: |
+        Get-AzAccessToken
+        Get-AzResourceGroup
+        azPSVersion: "latest"
+
+# Confirm we can run authenticated commands via the Azure CLI
+- name: Test Azure CLI
+    uses: azure/CLI@v1
+    with:
+    inlineScript: |
+        az account get-access-token
+        az group list
+    azcliversion: "latest"
+```
